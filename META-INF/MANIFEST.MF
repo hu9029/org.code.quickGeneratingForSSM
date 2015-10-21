@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: QuickGeneratingForSSM
+Bundle-SymbolicName: org.code.quickGeneratingForSSM;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.code.quickGenerating.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.gef,
+ org.eclipse.jdt.launching
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: lib/freemarker.jar,
+ .

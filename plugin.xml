@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="QuickGenerateForSSM Action Set"
+            visible="true"
+            id="org.code.quickGeneratingForSSM.actionSet">
+         <menu
+               label="ssm快速开发"
+               id="quickGenerateForSSM">
+            <separator
+                  name="quickGroupForSSM">
+            </separator>
+         </menu>
+         <action
+               label="代码生成"
+               class="org.code.quickGenerating.actions.CodeGenerateAction"
+               menubarPath="quickGenerateForSSM/quickGroupForSSM"
+               id="org.code.quickGenerating.actions.CodeGenerateAction">
+         </action>
+      </actionSet>
+   </extension>
+
+</plugin>
