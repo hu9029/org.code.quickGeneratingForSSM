@@ -7,7 +7,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -56,7 +58,7 @@ public class CodeGenerateView extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), getStyle());
-		shell.setSize(533, 176);
+		shell.setSize(567, 252);
 		shell.setText("\u4EE3\u7801\u751F\u6210");
 		shell.setLayout(new org.eclipse.swt.layout.FormLayout());
 		
@@ -97,12 +99,32 @@ public class CodeGenerateView extends Dialog {
 				CodeGenerating.init(project.getProject().getLocation().toString());
 				final String qualifiedName = text.getText();
 				final String packageName = text_1.getText();
+				final Boolean[] genSelect = new Boolean[4];
 				if("".equals(qualifiedName)||"".equals(packageName)){
 					MessageBox box = new MessageBox(shell, SWT.OK|SWT.ICON_WARNING);
 					box.setText("提示");
 					box.setMessage("请填写类限定名及模块名称");
 					box.open();
 				}else{
+					Control[] widgets= shell.getChildren();
+					for (Control widget : widgets) {
+						if(widget instanceof Button){
+							Button btn = (Button)widget;
+							if(btn.getText().equals("Controller")){
+								//是否生成controller
+								genSelect[0] = btn.getSelection();
+							}else if(btn.getText().equals("Service")){
+								//是否生成Service
+								genSelect[1] = btn.getSelection();
+							}else if(btn.getText().equals("Dao")){
+								//是否生成Dao
+								genSelect[2] = btn.getSelection();
+							}else if(btn.getText().equals("Jsp")){
+								//是否生成Jsp
+								genSelect[3] = btn.getSelection();
+							}
+						}
+					}
 					shell.close();
 					final Shell shellpb = new Shell(getParent(),SWT.BORDER|SWT.APPLICATION_MODAL|SWT.CLOSE);
 					final PbDialog pbd = new PbDialog(shellpb);
@@ -114,7 +136,7 @@ public class CodeGenerateView extends Dialog {
 								}
 							});
 							try {
-								CodeGenerating.generate(project,qualifiedName, packageName);
+								CodeGenerating.generate(project,qualifiedName, packageName,genSelect);
 								project.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 							} catch (Exception e) {
 								final String error = e.toString();
@@ -138,13 +160,13 @@ public class CodeGenerateView extends Dialog {
 			}
 		});
 		org.eclipse.swt.layout.FormData fd_button = new org.eclipse.swt.layout.FormData();
-		fd_button.left = new FormAttachment(0, 140);
-		fd_button.top = new FormAttachment(text_1, 34);
+		fd_button.bottom = new FormAttachment(100, -23);
+		fd_button.left = new FormAttachment(0, 117);
 		button.setLayoutData(fd_button);
 		button.setText("\u786E\u5B9A");
 		
 		Button button_1 = new Button(shell, SWT.NONE);
-		fd_button.right = new FormAttachment(100, -307);
+		fd_button.right = new FormAttachment(100, -330);
 		button_1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				shell.close();
@@ -152,9 +174,43 @@ public class CodeGenerateView extends Dialog {
 		});
 		org.eclipse.swt.layout.FormData fd_button_1 = new org.eclipse.swt.layout.FormData();
 		fd_button_1.top = new FormAttachment(button, 0, SWT.TOP);
-		fd_button_1.left = new FormAttachment(button, 107);
-		fd_button_1.right = new FormAttachment(100, -120);
+		fd_button_1.right = new FormAttachment(100, -118);
+		fd_button_1.left = new FormAttachment(0, 363);
 		button_1.setLayoutData(fd_button_1);
 		button_1.setText("\u53D6\u6D88");
+		
+		Button controllerCheckBtn = new Button(shell, SWT.CHECK);
+		controllerCheckBtn.setSelection(true);
+		FormData fd_controllerCheckBtn = new FormData();
+		fd_controllerCheckBtn.top = new FormAttachment(text_1, 21);
+		fd_controllerCheckBtn.left = new FormAttachment(text, 0, SWT.LEFT);
+		controllerCheckBtn.setLayoutData(fd_controllerCheckBtn);
+		controllerCheckBtn.setText("Controller");
+		
+		Button serviceCheckBtn = new Button(shell, SWT.CHECK);
+		serviceCheckBtn.setAlignment(SWT.CENTER);
+		serviceCheckBtn.setText("Service");
+		serviceCheckBtn.setSelection(true);
+		FormData fd_serviceCheckBtn = new FormData();
+		fd_serviceCheckBtn.top = new FormAttachment(controllerCheckBtn, 0, SWT.TOP);
+		fd_serviceCheckBtn.left = new FormAttachment(controllerCheckBtn, 20);
+		serviceCheckBtn.setLayoutData(fd_serviceCheckBtn);
+		
+		Button daoCheckBtn = new Button(shell, SWT.CHECK);
+		daoCheckBtn.setText("Dao");
+		daoCheckBtn.setSelection(true);
+		FormData fd_daoCheckBtn = new FormData();
+		fd_daoCheckBtn.top = new FormAttachment(controllerCheckBtn, 0, SWT.TOP);
+		fd_daoCheckBtn.left = new FormAttachment(serviceCheckBtn, 29);
+		daoCheckBtn.setLayoutData(fd_daoCheckBtn);
+		
+		Button JspCheckBtn = new Button(shell, SWT.CHECK);
+		JspCheckBtn.setAlignment(SWT.CENTER);
+		JspCheckBtn.setText("Jsp");
+		JspCheckBtn.setSelection(true);
+		FormData fd_JspCheckBtn = new FormData();
+		fd_JspCheckBtn.top = new FormAttachment(controllerCheckBtn, 0, SWT.TOP);
+		fd_JspCheckBtn.left = new FormAttachment(daoCheckBtn, 24);
+		JspCheckBtn.setLayoutData(fd_JspCheckBtn);
 	}
 }

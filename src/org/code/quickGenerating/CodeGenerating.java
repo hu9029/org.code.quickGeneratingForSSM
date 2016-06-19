@@ -37,9 +37,10 @@ public class CodeGenerating {
 	 * @param project
 	 * @param qualifiedName 实体类限定名
 	 * @param packageName 模块报名
+	 * @param genSelect 选择生成代码,0--controller,1-service,2-dao,3-jsp
 	 * @throws Exception
 	 */
-	public static void generate(IJavaProject project,String qualifiedName,String packageName) 
+	public static void generate(IJavaProject project,String qualifiedName,String packageName,Boolean[] genSelect) 
 			throws Exception{
 		String[] strs = qualifiedName.split("\\.");
 		
@@ -81,18 +82,26 @@ public class CodeGenerating {
 		String viewPath = path+File.separator+"webapp"+File.separator+"WEB-INF"+File.separator+"jsp"+File.separator+packageName;
 		
 		Map<String,Object> data = new HashMap<String, Object>();//模板数据
-		//生成dao类
-		generateDao(daoPackage, qualifiedName, projectPackage, daoName, entity, daoPath, data);
-		//生成Mybatis的Mapper文件
-		generateDaoMapper(project, daoQualifiedName, mapperPath, data);
-		//生成service接口
-		generateServInterface(servPackage, servName, servicePath, data);
-		//生成service实现类
-		generateServImpl(daoName, servicePath, data);
-		//生成controller类
-		generateController(webPackage, packageName, controllerName, servName, servQualifiedName, webPath, data);
-		//生成页面jsp
-		generateView(viewPath, viewName, data);
+		if(genSelect[2]){
+			//生成dao类
+			generateDao(daoPackage, qualifiedName, projectPackage, daoName, entity, daoPath, data);
+			//生成Mybatis的Mapper文件
+			generateDaoMapper(project, daoQualifiedName, mapperPath, data);
+		}
+		if(genSelect[1]){
+			//生成service接口
+			generateServInterface(servPackage, servName, servicePath, data);
+			//生成service实现类
+			generateServImpl(daoName, servicePath, data);
+		}
+		if(genSelect[0]){
+			//生成controller类
+			generateController(webPackage, packageName, controllerName, servName, servQualifiedName, webPath, data);
+		}
+		if(genSelect[3]){
+			//生成页面jsp
+			generateView(viewPath, viewName, data);
+		}
 		
 	}
 	
