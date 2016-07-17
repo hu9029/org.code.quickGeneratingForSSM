@@ -12,7 +12,7 @@
 	.search {background-image: url("../img/common/search.png");}
 	.update {background-image: url("../img/common/update.png");}
 </style>
-<title>title</title>
+<title>${viewName}</title>
 </head>
 <body>
 	<div id="tbar" style="height: 25px;">

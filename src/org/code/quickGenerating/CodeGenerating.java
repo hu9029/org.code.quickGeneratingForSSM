@@ -90,17 +90,17 @@ public class CodeGenerating {
 		}
 		if(genSelect[1]){
 			//生成service接口
-			generateServInterface(servPackage, servName, servicePath, data);
+			generateServInterface(servPackage,qualifiedName, projectPackage, servName, entity, servicePath, data);
 			//生成service实现类
-			generateServImpl(daoName, servicePath, data);
+			generateServImpl(daoName, servicePath, daoQualifiedName, data);
 		}
 		if(genSelect[0]){
 			//生成controller类
-			generateController(webPackage, packageName, controllerName, servName, servQualifiedName, webPath, data);
+			generateController(webPackage, qualifiedName, projectPackage, packageName, controllerName, entity, servName, servQualifiedName, webPath, data);
 		}
 		if(genSelect[3]){
 			//生成页面jsp
-			generateView(viewPath, viewName, data);
+			generateView(project, qualifiedName, viewPath, viewName, data);
 		}
 		
 	}
@@ -156,50 +156,92 @@ public class CodeGenerating {
 	/**
 	 * 生成service接口
 	 * @param servPackage service包路径
+	 * @param qualifiedName 实体类限定名
+	 * @param projectPackage 项目包路径
 	 * @param servName service类名
+	 * @param entity 实体类名
 	 * @param servicePath service文件路径
 	 * @param data 模板数据
 	 * @throws Exception
 	 */
-	private static void generateServInterface(String servPackage,String servName,String servicePath,
+	private static void generateServInterface(String servPackage,String qualifiedName,
+			String projectPackage,String servName,String entity,String servicePath,
 			Map<String,Object> data)throws Exception{
 		data.put("package", servPackage);
+		data.put("qualifiedName", qualifiedName);
+		data.put("projectPackage", projectPackage);
 		data.put("className", servName);
+		data.put("entity", entity);
+		data.put("selectId", "select"+entity+"Page");
+		data.put("insertId", "insert"+entity);
+		data.put("deleteId", "delete"+entity+"ById");
+		data.put("updateId", "update"+entity+"ById");
 		generateByFreeMarker("IService.ftl",servicePath,"I"+servName+".java",data);
 	}
 	/**
 	 * 生成service实现类
 	 * @param daoName dao类名，做为成员变量
 	 * @param servicePath service文件路径
+	 * @param daoQualifiedName dao限定名
 	 * @param data 模板数据
 	 * @throws Exception
 	 */
-	private static void generateServImpl(String daoName,String servicePath,Map<String,Object> data)throws Exception{
+	private static void generateServImpl(String daoName,String servicePath,String daoQualifiedName,Map<String,Object> data)throws Exception{
+		data.put("daoQualifiedName", daoQualifiedName);
 		data.put("propClass", daoName);
 		generateByFreeMarker("Service.ftl",servicePath+File.separator+"impl",data.get("className")+"Impl.java",data);
 	}
 	/**
 	 * 生成controller类
 	 * @param webPackage controller包路径
+	 * @param qualifiedName 实体类限定名
+	 * @param projectPackage 项目包路径
 	 * @param packageName 模块名
 	 * @param controllerName controller类名
+	 * @param entity 实体类名
 	 * @param servName service类名
 	 * @param servQualifiedName service接口限定名
 	 * @param webPath controller文件路径
 	 * @param data 模板数据
 	 * @throws Exception
 	 */
-	private static void generateController(String webPackage,String packageName,String controllerName,
+	private static void generateController(String webPackage,String qualifiedName,String projectPackage,
+			String packageName,String controllerName,String entity,
 			String servName,String servQualifiedName,String webPath,Map<String,Object> data)throws Exception{
 		data.put("package", webPackage);
+		data.put("qualifiedName", qualifiedName);
+		data.put("projectPackage", projectPackage);
 		data.put("packageName", packageName);//模块名
 		data.put("className", controllerName);
+		data.put("entity", entity);
 		data.put("propClass", servName);
 		data.put("servQualifiedName", servQualifiedName);
+		data.put("updateId", "update"+entity+"ById");
 		generateByFreeMarker("Controller.ftl",webPath,controllerName+".java",data);
 	}
 	
-	private static void generateView(String viewPath,String viewName,Map<String,Object> data)throws Exception{
+	/**
+	 * 
+	 * @param project 项目对象
+	 * @param qualifiedName 实体类限定名
+	 * @param viewPath view文件路径
+	 * @param viewName view名称
+	 * @param data 模板数据
+	 * @throws Exception
+	 */
+	private static void generateView(IJavaProject project,String qualifiedName,String viewPath,String viewName,Map<String,Object> data)throws Exception{
+		if(!data.containsKey("types")){
+			//获得实体类属性名及类型
+			List<EntityType> types = new ArrayList<EntityType>();
+			Class clazz = ClassHelper.loadClass(project, qualifiedName);
+			String[] propertys = CommonUtils.getClassFields(clazz);
+			String[] propTypes = CommonUtils.getClassFieldsType(clazz);
+			String[] columns = CommonUtils.getSqlFields(propertys);
+			for(int i=0;i<propertys.length;i++){
+				types.add(new EntityType(propertys[i], CommonUtils.isBaseType(propTypes[i]), columns[i]));
+			}
+			data.put("types", types);
+		}
 		data.put("viewName", viewName);
 		generateByFreeMarker("view.ftl",viewPath,viewName+".jsp",data);
 	}
