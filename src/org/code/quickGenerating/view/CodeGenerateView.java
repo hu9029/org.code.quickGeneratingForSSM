@@ -21,8 +21,8 @@ public class CodeGenerateView extends Dialog {
 
 	protected Object result;
 	protected Shell shell;
-	private Text text;
-	private Text text_1;
+	private Text daoText;
+	private Text modelText;
 	private IJavaProject project;
 
 	/**
@@ -58,47 +58,48 @@ public class CodeGenerateView extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), getStyle());
-		shell.setSize(567, 252);
-		shell.setText("\u4EE3\u7801\u751F\u6210");
+		shell.setSize(517, 252);
+		shell.setText("代码生成");
 		shell.setLayout(new org.eclipse.swt.layout.FormLayout());
 		
-		text = new Text(shell, SWT.BORDER);
-		org.eclipse.swt.layout.FormData fd_text = new org.eclipse.swt.layout.FormData();
-		fd_text.right = new FormAttachment(100, -23);
-		fd_text.top = new FormAttachment(0, 10);
-		text.setLayoutData(fd_text);
+		daoText = new Text(shell, SWT.BORDER);
+		org.eclipse.swt.layout.FormData fd_daoText = new org.eclipse.swt.layout.FormData();
+		fd_daoText.right = new FormAttachment(100, -23);
+		fd_daoText.top = new FormAttachment(0, 10);
+		daoText.setLayoutData(fd_daoText);
 		
-		text_1 = new Text(shell, SWT.BORDER);
-		org.eclipse.swt.layout.FormData fd_text_1 = new org.eclipse.swt.layout.FormData();
-		fd_text_1.left = new FormAttachment(text, 0, SWT.LEFT);
-		fd_text_1.top = new FormAttachment(text, 13);
-		fd_text_1.right = new FormAttachment(100, -23);
-		text_1.setLayoutData(fd_text_1);
+		modelText = new Text(shell, SWT.BORDER);
+		org.eclipse.swt.layout.FormData fd_modelText = new org.eclipse.swt.layout.FormData();
+		fd_modelText.left = new FormAttachment(daoText, 0, SWT.LEFT);
+		fd_modelText.top = new FormAttachment(daoText, 13);
+		fd_modelText.right = new FormAttachment(100, -23);
+		modelText.setLayoutData(fd_modelText);
 		
-		Label lblDao = new Label(shell, SWT.NONE);
-		fd_text.left = new FormAttachment(lblDao, 6);
-		lblDao.setAlignment(SWT.RIGHT);
-		org.eclipse.swt.layout.FormData fd_lblDao = new org.eclipse.swt.layout.FormData();
-		fd_lblDao.top = new FormAttachment(0, 13);
-		fd_lblDao.left = new FormAttachment(0, 10);
-		fd_lblDao.right = new FormAttachment(100, -393);
-		lblDao.setLayoutData(fd_lblDao);
-		lblDao.setText("\u5B9E\u4F53\u7C7B\u9650\u5B9A\u540D\uFF1A");
+		Label daoLabel = new Label(shell, SWT.NONE);
+		fd_daoText.left = new FormAttachment(daoLabel, 6);
+		daoLabel.setAlignment(SWT.RIGHT);
+		org.eclipse.swt.layout.FormData fd_daoLabel = new org.eclipse.swt.layout.FormData();
+		fd_daoLabel.top = new FormAttachment(0, 13);
+		fd_daoLabel.left = new FormAttachment(0, 10);
+		fd_daoLabel.right = new FormAttachment(100, -393);
+		daoLabel.setLayoutData(fd_daoLabel);
+		daoLabel.setText("实体类限定名");
 		
-		Label label = new Label(shell, SWT.NONE);
-		label.setAlignment(SWT.RIGHT);
-		org.eclipse.swt.layout.FormData fd_label = new org.eclipse.swt.layout.FormData();
-		fd_label.top = new FormAttachment(lblDao, 19);
-		fd_label.left = new FormAttachment(lblDao, 0, SWT.LEFT);
-		fd_label.right = new FormAttachment(100, -393);
-		label.setLayoutData(fd_label);
-		label.setText("\u6A21\u5757\u540D\uFF1A");
-		Button button = new Button(shell, SWT.NONE);
-		button.addSelectionListener(new SelectionAdapter() {
+		Label modelLabel = new Label(shell, SWT.NONE);
+		modelLabel.setAlignment(SWT.RIGHT);
+		org.eclipse.swt.layout.FormData fd_modelLabel = new org.eclipse.swt.layout.FormData();
+		fd_modelLabel.top = new FormAttachment(daoLabel, 19);
+		fd_modelLabel.left = new FormAttachment(daoLabel, 0, SWT.LEFT);
+		fd_modelLabel.right = new FormAttachment(100, -393);
+		modelLabel.setLayoutData(fd_modelLabel);
+		modelLabel.setText("模块名");
+		
+		Button confirmButton = new Button(shell, SWT.NONE);
+		confirmButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				CodeGenerating.init(project.getProject().getLocation().toString());
-				final String qualifiedName = text.getText();
-				final String packageName = text_1.getText();
+				final String qualifiedName = daoText.getText();
+				final String packageName = modelText.getText();
 				final Boolean[] genSelect = new Boolean[4];
 				if("".equals(qualifiedName)||"".equals(packageName)){
 					MessageBox box = new MessageBox(shell, SWT.OK|SWT.ICON_WARNING);
@@ -159,31 +160,32 @@ public class CodeGenerateView extends Dialog {
 				}
 			}
 		});
-		org.eclipse.swt.layout.FormData fd_button = new org.eclipse.swt.layout.FormData();
-		fd_button.bottom = new FormAttachment(100, -23);
-		fd_button.left = new FormAttachment(0, 117);
-		button.setLayoutData(fd_button);
-		button.setText("\u786E\u5B9A");
+		org.eclipse.swt.layout.FormData fd_confirmButton = new org.eclipse.swt.layout.FormData();
+		fd_confirmButton.left = new FormAttachment(0, 173);
+		fd_confirmButton.bottom = new FormAttachment(100, -23);
+		confirmButton.setLayoutData(fd_confirmButton);
+		confirmButton.setText("确定");
 		
-		Button button_1 = new Button(shell, SWT.NONE);
-		fd_button.right = new FormAttachment(100, -330);
-		button_1.addSelectionListener(new SelectionAdapter() {
+		Button cancelButton = new Button(shell, SWT.NONE);
+		fd_confirmButton.right = new FormAttachment(cancelButton, -99);
+		
+		org.eclipse.swt.layout.FormData fd_cancelButton = new org.eclipse.swt.layout.FormData();
+		fd_cancelButton.bottom = new FormAttachment(100, -23);
+		fd_cancelButton.right = new FormAttachment(100, -79);
+		fd_cancelButton.left = new FormAttachment(0, 352);
+		cancelButton.setLayoutData(fd_cancelButton);
+		cancelButton.setText("取消");
+		cancelButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				shell.close();
 			}
 		});
-		org.eclipse.swt.layout.FormData fd_button_1 = new org.eclipse.swt.layout.FormData();
-		fd_button_1.top = new FormAttachment(button, 0, SWT.TOP);
-		fd_button_1.right = new FormAttachment(100, -118);
-		fd_button_1.left = new FormAttachment(0, 363);
-		button_1.setLayoutData(fd_button_1);
-		button_1.setText("\u53D6\u6D88");
 		
 		Button controllerCheckBtn = new Button(shell, SWT.CHECK);
 		controllerCheckBtn.setSelection(true);
 		FormData fd_controllerCheckBtn = new FormData();
-		fd_controllerCheckBtn.top = new FormAttachment(text_1, 21);
-		fd_controllerCheckBtn.left = new FormAttachment(text, 0, SWT.LEFT);
+		fd_controllerCheckBtn.top = new FormAttachment(modelText, 21);
+		fd_controllerCheckBtn.left = new FormAttachment(daoText, 0, SWT.LEFT);
 		controllerCheckBtn.setLayoutData(fd_controllerCheckBtn);
 		controllerCheckBtn.setText("Controller");
 		
