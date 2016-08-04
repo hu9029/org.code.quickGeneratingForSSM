@@ -33,12 +33,20 @@
 	<div id="dlg" class="easyui-dialog" style="width:350px;height:300px;overflow:auto;"
             closed="true" modal="true" buttons="#dlg-buttons">
     	 <form id="fm" method="post" novalidate>
-    	 	 <#list types as type>
-    	 	 <div class="fitem">
-    	 	 	<label>${type.property}:</label>
-    	 	 	<input name="${type.property}" id="${type.property}" prompt="输入${type.property}" class="easyui-textbox" data-options="validType:{length:[0,30]}" required="true" missingMessage="请输入${type.property}.">
-    	 	 </div>
-    	 	 </#list>
+    	 	<table  cellpadding="0" cellspacing="1" class="formtable">
+    	 	<#list types as type>
+    	 	<tr>
+	 			<td align="right">
+					<label class="Validform_label">
+						${type.property}:
+					</label>
+				</td>
+				<td class="value">
+					<input name="${type.property}" id="${type.property}" prompt="输入${type.property}" class="easyui-textbox" data-options="validType:{length:[0,30]}" required="true" missingMessage="请输入${type.property}.">
+				</td>
+			</tr>
+    	 	</#list>
+			</table>
          </form>
          <div id="dlg-buttons">
 	        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-ok" onclick="save()" style="width:90px">保存</a>
@@ -59,23 +67,6 @@
 		</thead>
 	</table>
 </body>
-<style type="text/css">
-	#fm{
-	    margin:0;
-	    padding:30px 30px;
-	}
-	.fitem{
-	    margin-bottom:5px;
-	}
-	.fitem label{
-	    display:inline-block;
-	    width:60px;
-	    text-align: right;
-	}
-	.fitem input{
-	    width:160px;
-	}
-</style>
 <script type="text/javascript">
 var url;
 /**
